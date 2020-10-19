@@ -1,4 +1,5 @@
 import 'package:e_card/models/business_card.dart';
+import 'package:e_card/pages/Code/code_page.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vcard/vcard.dart';
@@ -6,11 +7,14 @@ import 'package:vcard/vcard.dart';
 class CustomCard extends StatelessWidget {
   final BusinessCard card;
   final void Function(BusinessCard card) onPress;
+  final BuildContext context;
 
-  const CustomCard({Key key, this.card, this.onPress}) : super(key: key);
+  const CustomCard({Key key, this.card, this.onPress, this.context})
+      : super(key: key);
 
   _onQrCodeTap() {
-    // TODO: implement
+    Navigator.pushNamed(context, CodePage.routeName,
+        arguments: CodePageArgs(data: _buildCodeData(card)));
   }
 
   String _buildCodeData(BusinessCard card) {
@@ -49,9 +53,12 @@ class CustomCard extends StatelessWidget {
                         child: InkWell(
                           onTap: _onQrCodeTap,
                           splashColor: Theme.of(context).accentColor,
-                          child: QrImage(
-                            data: _buildCodeData(card),
-                            backgroundColor: Colors.white,
+                          child: Hero(
+                            tag: "qrCode",
+                            child: QrImage(
+                              data: _buildCodeData(card),
+                              backgroundColor: Colors.white,
+                            ),
                           ),
                         ),
                       ),
@@ -80,33 +87,3 @@ class CustomCard extends StatelessWidget {
     );
   }
 }
-
-// Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                 children: [
-//                   Container(
-//                     color: Theme.of(context).accentColor,
-//                     constraints: BoxConstraints.expand(width: 100),
-//                     child: Center(
-//                       child: QrImage(
-//                         data: _buildCodeData(card),
-//                         backgroundColor: Colors.white,
-//                       ),
-//                     ),
-//                   ),
-//                   Column(
-//                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                     children: card
-//                         .toMap()
-//                         .entries
-//                         .map((entry) => Row(
-//                               children: [
-//                                 Text(
-//                                     "${entry.key[0].toUpperCase()}${entry.key.substring(1)}: "),
-//                                 Text(entry.value)
-//                               ],
-//                             ))
-//                         .toList(),
-//                   ),
-//                 ],
-//               ),

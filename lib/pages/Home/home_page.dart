@@ -52,6 +52,7 @@ class _HomePageState extends State<HomePage> {
                 ? CustomCard(
                     card: cardProvider.cardList.first,
                     onPress: _onCardTap,
+                    context: context,
                   )
                 : Text(
                     'No card registered',

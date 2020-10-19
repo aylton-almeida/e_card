@@ -1,4 +1,5 @@
 import 'package:e_card/pages/AddCard/add_card_page.dart';
+import 'package:e_card/pages/Code/code_page.dart';
 import 'package:e_card/pages/Home/home_page.dart';
 import 'package:e_card/providers/business_card_provider.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,8 @@ import 'package:provider/single_child_widget.dart';
 class Routes {
   final routes = <String, WidgetBuilder>{
     HomePage.routeName: (context) => HomePage(),
-    AddCardPage.routeName: (context) => AddCardPage()
+    AddCardPage.routeName: (context) => AddCardPage(),
+    CodePage.routeName: (context) => CodePage()
   };
 
   final appTheme = ThemeData(
