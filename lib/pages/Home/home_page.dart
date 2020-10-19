@@ -1,7 +1,12 @@
 import 'dart:ui';
 
+import 'package:e_card/models/business_card.dart';
 import 'package:e_card/pages/AddCard/add_card_page.dart';
+import 'package:e_card/pages/Home/widgets/CustomCard/custom_card_widget.dart';
+import 'package:e_card/providers/business_card_provider.dart';
+import 'package:e_card/utils/slide_route_transition.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   static final routeName = '/home';
@@ -11,33 +16,47 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  _onAddPress() {
-    Navigator.pushNamed(context, AddCardPage.routeName);
+  @override
+  void initState() {
+    super.initState();
+
+    _connectDb();
   }
 
-  _onCardTap() {
+  _connectDb() async {
+    final cardProvider =
+        Provider.of<BusinessCardProvider>(context, listen: false);
+    await cardProvider.open();
+    cardProvider.getCards();
+  }
+
+  _onAddPress() {
+    Navigator.of(context).push(createSlideRouteTransition(
+        Offset(1.0, 0), Offset.zero, Curves.ease, AddCardPage()));
+  }
+
+  _onCardTap(BusinessCard card) {
     // TODO: implement
   }
 
   @override
   Widget build(BuildContext context) {
+    final cardProvider = Provider.of<BusinessCardProvider>(context);
+
     return Scaffold(
       appBar: AppBar(title: Text('E-Card')),
       body: Stack(
         children: [
           Center(
-            child: Card(
-              color: Theme.of(context).primaryColor,
-              child: InkWell(
-                onTap: _onCardTap,
-                child: AnimatedContainer(
-                  duration: Duration(seconds: 2),
-                  width: 340,
-                  height: 220,
-                  child: Text('Text'),
-                ),
-              ),
-            ),
+            child: cardProvider.cardList.length > 0
+                ? CustomCard(
+                    card: cardProvider.cardList.first,
+                    onPress: _onCardTap,
+                  )
+                : Text(
+                    'No card registered',
+                    style: TextStyle(fontSize: 18),
+                  ),
           ),
           Align(
             alignment: Alignment.bottomCenter,

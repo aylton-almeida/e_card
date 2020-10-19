@@ -1,9 +1,13 @@
+import 'package:e_card/models/business_card.dart';
+import 'package:e_card/providers/business_card_provider.dart';
+import 'package:e_card/utils/alerts.dart';
 import 'package:e_card/utils/input_mask.dart';
 import 'package:e_card/utils/validators.dart';
 import 'package:e_card/widgets/keyboardDismissContainer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-const forms = ['name', 'email', 'telefone', 'empresa', 'endereço', 'site'];
+const forms = ['name', 'email', 'phone', 'company', 'address', 'site'];
 
 class AddCardPage extends StatefulWidget {
   static final routeName = '/addCard';
@@ -22,30 +26,55 @@ class _AddCardPageState extends State<AddCardPage> {
     value: (_) => [TextEditingController(), FocusNode()],
   );
 
-  String Function(String) t;
+  @override
+  void dispose() {
+    _controllerList.forEach((key, value) {
+      (value.first as TextEditingController).dispose();
+    });
+    super.dispose();
+  }
 
-  _handleSavePress() {
-    // TODO: implement
+  _handleSavePress(BuildContext context) async {
+    if (_formKey.currentState.validate()) {
+      dismissKeyboard(context);
+      setState(() => _isLoading = true);
+      final BusinessCardProvider provider =
+          Provider.of<BusinessCardProvider>(context, listen: false);
+
+      try {
+        await provider.insert(BusinessCard.fromMap(_controllerList.map(
+            (label, value) =>
+                MapEntry(label, (value.first as TextEditingController).text))));
+        Navigator.of(context).pop();
+      } catch (err) {
+        print(err);
+        Alerts.showSnackBar(
+            context: context,
+            text: 'We had a problem. Please, try again later.',
+            color: Colors.red);
+      } finally {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   String Function(String) _getValidator(String label) {
-    if (label == 'email')
-      return Validators.validateEmail;
-    else
-      return Validators.require;
+    if (label == 'email') return Validators.validateEmail;
+    if (label == 'name' || label == 'phone') return Validators.require;
+    return (_) => null;
   }
 
   TextInputType _getKeyboardType(String label) {
     switch (label) {
-      case 'nome':
+      case 'name':
         return TextInputType.name;
       case 'email':
         return TextInputType.emailAddress;
-      case 'telefone':
+      case 'phone':
         return TextInputType.phone;
       case 'site':
         return TextInputType.url;
-      case 'endereço':
+      case 'address':
         return TextInputType.streetAddress;
       default:
         return TextInputType.text;
@@ -71,11 +100,11 @@ class _AddCardPageState extends State<AddCardPage> {
         validator: _getValidator(label),
         textCapitalization: TextCapitalization.none,
         focusNode: node,
-        inputFormatters: label == 'telefone' ? [InputMasks.phoneMask()] : null,
+        inputFormatters: label == 'phone' ? [InputMasks.phoneMask()] : null,
         decoration: InputDecoration(
           filled: true,
           labelText: "${label[0].toUpperCase()}${label.substring(1)}",
-          hintText: "Digite ${label.endsWith('a') ? 'sua' : 'seu'} $label...",
+          hintText: "Type your $label...",
         ),
       ),
       const SizedBox(height: 40)
@@ -86,7 +115,7 @@ class _AddCardPageState extends State<AddCardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Adicionar Cartão'),
+        title: Text('Add Business Card'),
       ),
       body: KeyboardDismissContainer(
         child: IgnorePointer(
@@ -95,20 +124,23 @@ class _AddCardPageState extends State<AddCardPage> {
             key: _formKey,
             child: Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 24, horizontal: 32),
                 child: Column(
                   children: [
                     ..._controllerList.entries
                         .map((e) =>
                             _buildForm(e.key, e.value.first, e.value.last))
                         .expand((e) => e),
-                    SizedBox(
-                      height: 48,
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _handleSavePress,
-                        child: Text(
-                          "confirmar".toUpperCase(),
+                    Builder(
+                      builder: (context) => SizedBox(
+                        height: 48,
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => _handleSavePress(context),
+                          child: Text(
+                            "confirm".toUpperCase(),
+                          ),
                         ),
                       ),
                     )
@@ -122,12 +154,3 @@ class _AddCardPageState extends State<AddCardPage> {
     );
   }
 }
-
-/**
-  nome 
-  email
-  telefone
-  empresa
-  endereco
-  site 
-  */

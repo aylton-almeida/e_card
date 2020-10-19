@@ -1,7 +1,10 @@
 import 'package:e_card/pages/AddCard/add_card_page.dart';
 import 'package:e_card/pages/Home/home_page.dart';
+import 'package:e_card/providers/business_card_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 class Routes {
   final routes = <String, WidgetBuilder>{
@@ -22,6 +25,10 @@ class Routes {
     ),
   );
 
+  final providers = <SingleChildWidget>[
+    ChangeNotifierProvider(create: (context) => BusinessCardProvider())
+  ];
+
   Routes() {
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -30,12 +37,15 @@ class Routes {
       DeviceOrientation.portraitDown,
     ]);
     runApp(
-      MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'E-Card',
-        theme: appTheme,
-        initialRoute: HomePage.routeName,
-        routes: routes,
+      MultiProvider(
+        providers: providers,
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'E-Card',
+          theme: appTheme,
+          initialRoute: HomePage.routeName,
+          routes: routes,
+        ),
       ),
     );
   }
