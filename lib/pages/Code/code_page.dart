@@ -24,13 +24,13 @@ class _CodePageState extends State<CodePage> {
     final CodePageArgs args = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        color: Theme.of(context).accentColor,
-        padding: const EdgeInsets.all(32),
-        child: InkWell(
-          onTap: _onClosePress,
+      body: InkWell(
+        onTap: _onClosePress,
+        child: Container(
+          height: double.infinity,
+          width: double.infinity,
+          color: Theme.of(context).accentColor,
+          padding: const EdgeInsets.all(32),
           child: Center(
             child: Hero(
               tag: "qrCode",

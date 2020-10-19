@@ -37,8 +37,7 @@ class CustomCard extends StatelessWidget {
         onTap: () => onPress(card),
         child: AnimatedContainer(
           duration: Duration(seconds: 2),
-          width: 340,
-          height: 220,
+          constraints: BoxConstraints.tight(Size(340, 220)),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: DefaultTextStyle(

@@ -16,6 +16,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _cardIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -49,10 +51,24 @@ class _HomePageState extends State<HomePage> {
         children: [
           Center(
             child: cardProvider.cardList.length > 0
-                ? CustomCard(
-                    card: cardProvider.cardList.first,
-                    onPress: _onCardTap,
-                    context: context,
+                ? Container(
+                    constraints: BoxConstraints.expand(),
+                    child: PageView.builder(
+                      itemCount: cardProvider.cardList.length,
+                      controller: PageController(viewportFraction: 0.9),
+                      onPageChanged: (index) =>
+                          setState(() => _cardIndex = index),
+                      itemBuilder: (context, i) => Transform.scale(
+                        scale: i == _cardIndex ? 1 : 0.9,
+                        child: Center(
+                          child: CustomCard(
+                            card: cardProvider.cardList[i],
+                            onPress: _onCardTap,
+                            context: context,
+                          ),
+                        ),
+                      ),
+                    ),
                   )
                 : Text(
                     'No card registered',
