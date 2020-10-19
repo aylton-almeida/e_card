@@ -3,8 +3,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 class CodePageArgs {
   final String data;
+  final int id;
 
-  CodePageArgs({this.data});
+  CodePageArgs({this.data, this.id});
 }
 
 class CodePage extends StatefulWidget {
@@ -33,7 +34,7 @@ class _CodePageState extends State<CodePage> {
           padding: const EdgeInsets.all(32),
           child: Center(
             child: Hero(
-              tag: "qrCode",
+              tag: "qrCode${args.id}",
               child: QrImage(
                 data: args.data,
                 backgroundColor: Colors.white,

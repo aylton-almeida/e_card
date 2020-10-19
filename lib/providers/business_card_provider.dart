@@ -36,7 +36,7 @@ class BusinessCardProvider with ChangeNotifier {
   Future getCards() async {
     final maps = await db.query(
       businessCardsTable,
-      columns: ['name', 'email', 'phone', 'company', 'address', 'site'],
+      columns: ['id', 'name', 'email', 'phone', 'company', 'address', 'site'],
     );
 
     if (maps.length > 0)

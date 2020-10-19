@@ -14,7 +14,7 @@ class CustomCard extends StatelessWidget {
 
   _onQrCodeTap() {
     Navigator.pushNamed(context, CodePage.routeName,
-        arguments: CodePageArgs(data: _buildCodeData(card)));
+        arguments: CodePageArgs(data: _buildCodeData(card), id: card.id));
   }
 
   String _buildCodeData(BusinessCard card) {
@@ -53,7 +53,7 @@ class CustomCard extends StatelessWidget {
                           onTap: _onQrCodeTap,
                           splashColor: Theme.of(context).accentColor,
                           child: Hero(
-                            tag: "qrCode",
+                            tag: "qrCode${card.id}",
                             child: QrImage(
                               data: _buildCodeData(card),
                               backgroundColor: Colors.white,
